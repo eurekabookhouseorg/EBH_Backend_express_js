@@ -334,6 +334,10 @@ module.exports = function(sequelize, DataTypes) {
     source: {
       type: DataTypes.STRING(5),
       allowNull: false
+    },
+    token_mitrans: {
+      type: DataTypes.STRING(255),
+      allowNull: true
     }
   }, {
     sequelize,

@@ -41,39 +41,95 @@
                             id_customer: req.body.customer_id,
                         },
                     });
+
+                    const productData = await db_product.findByPk(req.body.id_produk);
         
+                    // if (checkDataSama) {
+                    //     const updateQty = checkDataSama.qty + req.body.qty;
+                    //     await carts.update({qty : updateQty}, {
+                    //         where : {
+                    //             id_produk : req.body.id_produk,
+                    //             id_customer : req.body.customer_id
+                    //         }
+                    //     })
+                    //     output = {
+                    //         status: {
+                    //             code: 200,
+                    //             message: 'Sukses Update Qty keranjang'
+                    //         }
+                    //     }
+                    // } else {
+                    //     const setCart = await carts.create({
+                    //         id_produk: req.body.id_produk,
+                    //         id_customer: req.body.customer_id,
+                    //         qty: req.body.qty,
+                    //         date_add: new Date(),
+                    //         token_session: "",
+                    //         is_elibu: req.body.is_elibu,
+                    //         is_checked: req.body.is_checked,
+                    //     });
+        
+                    //     if (setCart) {
+                    //         output = {
+                    //             status: {
+                    //                 code: 200,
+                    //                 message: 'Sukses Tambah Ke Keranjang'
+                    //             },
+                    //         }
+                    //     }
+                    // }
+
                     if (checkDataSama) {
-                        const updateQty = checkDataSama.qty + req.body.qty;
-                        await carts.update({qty : updateQty}, {
-                            where : {
-                                id_produk : req.body.id_produk,
-                                id_customer : req.body.customer_id
-                            }
-                        })
-                        output = {
-                            status: {
-                                code: 200,
-                                message: 'Sukses Update Qty keranjang'
-                            }
-                        }
-                    } else {
-                        const setCart = await carts.create({
-                            id_produk: req.body.id_produk,
-                            id_customer: req.body.customer_id,
-                            qty: req.body.qty,
-                            date_add: new Date(),
-                            token_session: "",
-                            is_elibu: req.body.is_elibu,
-                            is_checked: req.body.is_checked,
-                        });
-        
-                        if (setCart) {
+                        const totalQty = checkDataSama.qty + req.body.qty;
+                        if (productData && totalQty <= productData.quantity) {
+                            await carts.update({ qty: totalQty }, {
+                                where: {
+                                    id_produk: req.body.id_produk,
+                                    id_customer: req.body.customer_id
+                                }
+                            });
                             output = {
                                 status: {
                                     code: 200,
-                                    message: 'Sukses Tambah Ke Keranjang'
-                                },
+                                    message: 'Sukses Update Qty keranjang'
+                                }
+                            };
+                        } else {
+                            output = {
+                                status: {
+                                    code: 400,
+                                    message: 'Gagal Update Qty keranjang. Quantity produk tidak mencukupi.'
+                                }
+                            };
+                        }
+                    } else {
+                        const totalQty = req.body.qty;
+                        if (productData && totalQty <= productData.quantity) {
+                            const setCart = await carts.create({
+                                id_produk: req.body.id_produk,
+                                id_customer: req.body.customer_id,
+                                qty: req.body.qty,
+                                date_add: new Date(),
+                                token_session: "",
+                                is_elibu: req.body.is_elibu,
+                                is_checked: req.body.is_checked,
+                            });
+                    
+                            if (setCart) {
+                                output = {
+                                    status: {
+                                        code: 200,
+                                        message: 'Sukses Tambah Ke Keranjang'
+                                    },
+                                };
                             }
+                        } else {
+                            output = {
+                                status: {
+                                    code: 400,
+                                    message: 'Gagal Tambah Ke Keranjang. Quantity produk tidak mencukupi.'
+                                }
+                            };
                         }
                     }
                 } else {

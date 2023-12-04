@@ -11,6 +11,9 @@ const db_product_category = db_product_category_model(sequelize, DataTypes);
 const  db_category_model= require('../models/db_category');
 const db_category = db_category_model(sequelize, DataTypes);
 
+const  db_manufacturer_model= require('../models/db_manufacturer');
+const db_manufacturer = db_manufacturer_model(sequelize, DataTypes);
+
 exports.getProduct = async (req, res) => {
   try {
     db_product.belongsTo(db_product_description, { targetKey: 'product_id', foreignKey: 'product_id' });
@@ -74,20 +77,35 @@ exports.detailProduct = async ( req, res) => {
   try {
     const findId = req.params.product_id;
     db_product.belongsTo(db_product_description, { targetKey: 'product_id', foreignKey: 'product_id' });
+    db_product.belongsTo(db_manufacturer, { targetKey: 'manufacturer_id', foreignKey: 'manufacturer_id' });
         const products = await db_product.findByPk(findId, {
           include: [
             {
-              model: db_product_description
+              model: db_product_description,
+            },
+            {
+              model: db_manufacturer,
             }
           ]
         });
       if(products !== null){
+        const originalPrice = parseFloat(products.price);
+        const presentasiDiskon = parseFloat(products.diskon);
+
+        let diskonPrice = null;
+        if(presentasiDiskon !==0){
+          diskonPrice = originalPrice - (originalPrice * (presentasiDiskon / 100))
+        }
+
         res.status(200).json({
           status: {
             code : 200,
             message: 'Data produk berhasil diambil',
           },
-          data: {order : products},
+          data: {
+            order : products,
+            diskonPrice : diskonPrice
+          },
         });
       }else{
         res.status(404).json({

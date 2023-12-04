@@ -20,6 +20,7 @@ var CartRouter = require('./routes/carts');
 var SearchRouter = require('./routes/searching');
 var ShippingRouter = require('./routes/shippings');
 var OrderRouter = require('./routes/orders');
+var ManufacturRouter = require('./routes/manufactur');
 
 var app = express();
 
@@ -45,5 +46,6 @@ app.use('/cart', CartRouter);
 app.use('/search', SearchRouter);
 app.use('/shipping', ShippingRouter);
 app.use('/order', OrderRouter);
+app.use('/manufactur', ManufacturRouter);
 
 module.exports = app;
