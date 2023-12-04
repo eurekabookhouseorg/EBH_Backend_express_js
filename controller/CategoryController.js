@@ -205,3 +205,79 @@ exports.detailSlugCategory = async(req, res) =>{
       });
   }
 }
+
+exports.getSubCategories = async (req, res) => {
+  try {
+    categories.belongsTo(category_desc, { targetKey: 'category_id', foreignKey: 'category_id' });
+    const dataCategory = await categories.findAll({
+      include: [
+        {
+          model: category_desc,
+        },
+      ],
+      where: { status: true },
+    });
+
+    if (dataCategory.length > 0) {
+      // Create a map to store categories based on category_id
+      const categoryMap = new Map();
+
+      // Initialize the result array
+      const result = [];
+
+      // Populate the categoryMap and result array
+      dataCategory.forEach(category => {
+        const categoryId = category.category_id;
+        const parentId = category.parent_id;
+
+        if (!categoryMap.has(categoryId)) {
+          categoryMap.set(categoryId, {
+            category_id: categoryId,
+            parent_id: category.parent_id,
+            name: category.db_category_description ? category.db_category_description.name : 'Nama Tidak Tersedia',
+            image: category.image,
+            status: category.status,
+            erlangga: category.erlangga,
+            date_added: category.date_added,
+            date_modified: category.date_modified,
+            subcategories: [],
+          });
+        }
+
+        if (parentId === 0) {
+          // If parent_id is 0, add to the result array
+          result.push(categoryMap.get(categoryId));
+        } else {
+          // If parent_id is not 0, add as a subcategory to its parent
+          if (!categoryMap.has(parentId)) {
+            categoryMap.set(parentId, {
+              subcategories: [],
+            });
+          }
+          categoryMap.get(parentId).subcategories.push(categoryMap.get(categoryId));
+        }
+      });
+
+      res.status(200).json({
+        status: {
+          code: 200,
+          message: 'Data Category berhasil diambil',
+        },
+        data: { order: result },
+      });
+    } else {
+      res.status(404).json({
+        status: 404,
+        message: 'Data Category tidak ditemukan',
+        data: null,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Terjadi kesalahan saat mengambil data Gambar',
+      data: null,
+    });
+  }
+};

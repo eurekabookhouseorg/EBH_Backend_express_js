@@ -3,6 +3,7 @@ const {sequelize, DataTypes} = require("../connection/conn");
 const db_customer = require("../models/db_customer");
 const customers = db_customer(sequelize, DataTypes);
 const customErrorMiddleware = require("../middleware/middleware.result")
+const path = require('path');
 
 exports.getCustomers = async (req, res) => {
     try {
@@ -236,11 +237,13 @@ exports.editCustomer = async (req, res) => {
 
                 if (user) {
                     // Lakukan pembaruan profil pelanggan menggunakan metode update
+                    const normalizedPath = req.file.path.split(path.sep).join('/');
                     const updatedUser = await user.update({
                         firstname: firstname,
                         lastname: lastname,
                         email: email,
-                        telephone: telephone
+                        telephone: telephone,
+                        avatar: normalizedPath
                     });
 
                     res.status(200).json({

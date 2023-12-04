@@ -1,4 +1,5 @@
 const {sequelize, DataTypes} = require("../connection/conn");
+const midtransClient = require('midtrans-client');
 
 const db_order = require("../models/db_order");
 const order = db_order(sequelize, DataTypes);
@@ -23,6 +24,9 @@ const db_product = db_product_model(sequelize, DataTypes);
 
 const  db_product_description_model= require('../models/db_product_description');
 const db_product_description = db_product_description_model(sequelize, DataTypes);
+
+const  db_notification_model= require('../models/db_notification');
+const db_notification = db_notification_model(sequelize, DataTypes);
 
 // const { Op } = require('sequelize');
 
@@ -62,7 +66,8 @@ exports.getOrder = async(req, res) => {
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    order: [['order_id', 'desc']]
                 })
 
                 if(dataOrder){
@@ -99,7 +104,7 @@ exports.getOrder = async(req, res) => {
                         
                     });
 
-                    const groupedOrderArray = Object.values(groupedOrder);
+                    const groupedOrderArray = Object.values(groupedOrder).sort((a, b) => b.order_id - a.order_id);
 
                     res.status(200).json({
                         status: {
@@ -192,7 +197,8 @@ exports.detailOrder = async(req, res) => {
                         },
                         data : [
                                 {order : dataOrder}
-                        ]
+                        ],
+                        tokenMitrans : dataOrder.token_mitrans
                     });
                 } else {
                     res.status(400).json({
@@ -407,6 +413,12 @@ exports.checkoutProduct = async (req, res) => {
                             elib_created_at
                         } = product;
 
+                        const productData = await db_product.findByPk(product_id);
+                        if (productData) {
+                            const updatedQuantity = productData.quantity - quantity;
+                            await db_product.update({ quantity: updatedQuantity }, { where: { product_id } });
+                        }
+
                         // Sisipkan setiap produk ke dalam order_product
                         orderProduct = await order_product.create({
                             order_id: newOrderId,
@@ -451,6 +463,33 @@ exports.checkoutProduct = async (req, res) => {
                         date_added: new Date()
                     })
 
+                    setTimeout(async () => {
+                        // const oneMinuteAgo = new Date();
+                        // oneMinuteAgo.setMinutes(oneMinuteAgo.getMinutes() - 1);
+                    
+                        // const orderToNotify = await order.findOne({
+                        //     where: {
+                        //         order_id: setOrder.order_id,
+                        //         date_added: {
+                        //             $lt: oneMinuteAgo,
+                        //         },
+                        //     },
+                        // });
+                    
+                        // if (orderToNotify) {
+                            await db_notification.create({
+                                user_id : customer_id,
+                                invoice_no	: `${year}${month}${day}${formattedCounter}`,
+                                judul_notif	 : "Pesanan Kedaluarsa",
+                                isi_notif : "Kedaluarsa",
+                                tgl_added :	new Date(),
+                                dibaca : "0",
+                                jenis :	"order",
+                                variasi : "E"
+                            });
+                        // }
+                    }, 2000);
+
                     if (orderProduct && createOrderTotal && orderHistory) {
                         output = {
                             status: {
@@ -487,3 +526,68 @@ exports.checkoutProduct = async (req, res) => {
         res.status(errorsFromMiddleware.status.code).send(errorsFromMiddleware);
     }
 };
+
+exports.mitrans = async(req, res) => {
+    const errorsFromMiddleware = await customErrorMiddleware(req);
+
+    try {
+        if (!errorsFromMiddleware) {
+            let snap = new midtransClient.Snap({
+                isProduction: true,
+                serverKey: `Mid-server-cZfFQcM-7EN0CgeFCk42UQiw`,
+                clientKey: `Mid-client-iS2ydMsFEsJ1M7q_`
+            });
+            
+                let parameter = {
+                    "transaction_details": {
+                        "order_id": req.body.order_id,
+                        "gross_amount": req.body.subtotal_final
+                    }, 
+                    "credit_card": {
+                        "secure": true
+                    }
+                };
+            
+                snap.createTransaction(parameter)
+                .then(async (transaction) => {
+                    let transactionToken = transaction.token;
+                    // console.log('transactionToken:', transactionToken);
+                    
+                    const updateOrder = await order.update(
+                        {
+                            token_mitrans: transactionToken
+                        },
+                        {
+                        where : {
+                            order_id : req.body.order_id
+                        }
+                    })
+
+                    if(updateOrder){
+                        output = {
+                            status: {
+                                code: 200,
+                                message: 'Berhasil Mitrans'
+                            },
+                            data : transactionToken
+                        }
+                    }
+
+                    
+            })
+        }
+    } catch (error) {
+        output = {
+            status: {
+                code: 500,
+                message: error.message
+            }
+        }
+    }
+
+    if (!errorsFromMiddleware) {
+        res.status(output.status.code).send(output);
+    } else {
+        res.status(errorsFromMiddleware.status.code).send(errorsFromMiddleware);
+    }
+}
