@@ -335,7 +335,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(5),
       allowNull: false
     },
-    token_mitrans: {
+    token_midtrans: {
       type: DataTypes.STRING(255),
       allowNull: true
     }

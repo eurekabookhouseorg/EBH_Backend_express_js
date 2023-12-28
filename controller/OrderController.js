@@ -198,7 +198,7 @@ exports.detailOrder = async(req, res) => {
                         data : [
                                 {order : dataOrder}
                         ],
-                        tokenMitrans : dataOrder.token_mitrans
+                        tokenMitrans : dataOrder.token_midtrans
                     });
                 } else {
                     res.status(400).json({
@@ -555,7 +555,7 @@ exports.mitrans = async(req, res) => {
                     
                     const updateOrder = await order.update(
                         {
-                            token_mitrans: transactionToken
+                            token_midtrans: transactionToken
                         },
                         {
                         where : {

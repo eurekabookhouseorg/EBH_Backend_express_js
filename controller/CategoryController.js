@@ -164,9 +164,24 @@ exports.detailSlugCategory = async(req, res) =>{
     });
 
     if(dataCetegory.length > 0) {
+      const categoryId = dataCetegory[0].category_id;
+
+      // Fetch related categories based on the first category's ID
+      const relatedCategories = await categories.findAll({
+        include: [
+          {
+            model: category_desc,
+          },
+        ],
+        where: {
+          parent_id: categoryId,
+        },
+      });
+
       const mappedSlugCategory = dataCetegory.map(product => {
         if (product.db_products && Array.isArray(product.db_products)) {
           return product.db_products.map(dbProduct => ({
+            category_id: product.category_id || "tidak tersedia",
             product_id: dbProduct.product_id || "tidak tersedia",
             name: (dbProduct.db_product_description && dbProduct.db_product_description.name) || "tidak tersedia",
             model: dbProduct.model || "tidak tersedia",
@@ -181,13 +196,25 @@ exports.detailSlugCategory = async(req, res) =>{
           return ["tidak tersedia"];
         }
       });
+
+      const mappedRelateCategory = relatedCategories.map(rc => ({
+          category_id: rc.category_id,
+          parent_id: rc.parent_id,
+          name: rc.db_category_description.name,
+          slug: rc.db_category_description.slug
+      }));
+      
       
       res.status(200).json({
         status: {
           code : 200,
           message: 'Data Category berhasil diambil',
         },
-        data: {order : mappedSlugCategory}
+        data: {
+          order : mappedSlugCategory,
+          // original : dataCetegory,
+          relateCategory: mappedRelateCategory
+        }
       });
     } else {
       res.status(404).json({
@@ -219,13 +246,10 @@ exports.getSubCategories = async (req, res) => {
     });
 
     if (dataCategory.length > 0) {
-      // Create a map to store categories based on category_id
       const categoryMap = new Map();
 
-      // Initialize the result array
       const result = [];
 
-      // Populate the categoryMap and result array
       dataCategory.forEach(category => {
         const categoryId = category.category_id;
         const parentId = category.parent_id;
@@ -235,6 +259,7 @@ exports.getSubCategories = async (req, res) => {
             category_id: categoryId,
             parent_id: category.parent_id,
             name: category.db_category_description ? category.db_category_description.name : 'Nama Tidak Tersedia',
+            slug: category.db_category_description ? category.db_category_description.slug : 'Slug Tidak Tersedia',
             image: category.image,
             status: category.status,
             erlangga: category.erlangga,
