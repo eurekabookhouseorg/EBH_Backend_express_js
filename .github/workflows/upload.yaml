@@ -20,8 +20,5 @@ jobs:
         password: nkeectud90HJGJ
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
-          git add .
-          git commit -m "Commit perubahan lokal"
-          git stash
-          git checkout test_upload
-          git pull origin test_upload
+          git checkout develop
+          git pull origin develop
