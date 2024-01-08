@@ -22,6 +22,6 @@ jobs:
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
           git stash
           git fetch
-         git branch -a
+          git branch -a
           git pull  
           
