@@ -21,7 +21,6 @@ jobs:
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
           git fetch
-          git merge main
           git checkout main
           git branch -a
           git pull  
