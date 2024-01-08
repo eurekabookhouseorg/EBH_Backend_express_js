@@ -2,7 +2,7 @@ name: Deploy to Server
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
@@ -17,8 +17,19 @@ jobs:
         host: 103.235.73.12
         username: jaja
         port: 2020
-        password: nkeectud90HJGJ
+        password: ${{ secrets.SSH_PASSWORD }}
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
-          git pull  
-          
+
+          # Log into the server and check the current state of the repository
+          git status
+
+          # Fetch the latest changes from the 'main' branch
+          git pull origin main
+
+          # Add more deployment steps if needed
+
+          # Log the result of the deployment
+          echo "Deployment completed successfully."
+
+# Add your secrets (SSH_PASSWORD) in the GitHub repository settings
