@@ -2,7 +2,7 @@ name: Deploy to Server
 
 on:
   push:
-    branches: [main]
+    branches: [test_upload]
 
 jobs:
   deploy:
@@ -20,6 +20,6 @@ jobs:
         password: nkeectud90HJGJ
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
-          git pull origin main
+          git pull
 
 # Add your secrets (SSH_PASSWORD) in the GitHub repository settings
