@@ -50,7 +50,7 @@ exports.getProduct = async (req, res) => {
       res.status(200).json({
         status: {
           code : 200,
-          message: 'Data produk berhasil diambil ea',
+          message: 'Data produk berhasil diambil test',
         },
         data: {order : mappedProducts},
       });

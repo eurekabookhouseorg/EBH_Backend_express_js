@@ -22,3 +22,4 @@ jobs:
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
           git checkout develop
           git pull origin develop
+          npm start
