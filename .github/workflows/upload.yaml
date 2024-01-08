@@ -20,7 +20,6 @@ jobs:
         password: nkeectud90HJGJ
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
-          git stash
           git fetch
           git merge main
           git checkout main
