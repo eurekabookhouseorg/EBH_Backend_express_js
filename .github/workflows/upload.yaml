@@ -23,5 +23,5 @@ jobs:
           git stash
           git fetch
           git checkout main
-          git pull origin main
+          git pull origin main --rebase
           
