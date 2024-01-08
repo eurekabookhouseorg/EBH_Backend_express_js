@@ -20,5 +20,6 @@ jobs:
         password: nkeectud90HJGJ
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
+          git init
           git pull origin main
           
