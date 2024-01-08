@@ -20,6 +20,4 @@ jobs:
         password: nkeectud90HJGJ
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
-          git pull
-
-# Add your secrets (SSH_PASSWORD) in the GitHub repository settings
+          git pull origin test_upload
