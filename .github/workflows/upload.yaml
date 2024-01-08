@@ -19,6 +19,6 @@ jobs:
         port: 2020
         password: nkeectud90HJGJ
         script: |
-          cd /sites/stagingapi.eurekabookhouse.co.id/
+          cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
           git pull origin main
           
