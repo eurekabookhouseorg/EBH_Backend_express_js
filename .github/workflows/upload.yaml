@@ -20,7 +20,7 @@ jobs:
         password: nkeectud90HJGJ
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
-
+          git remote add origin https://github.com/eurekabookhouseorg/EBH_Backend_express_js.git
           # Log into the server and check the current state of the repository
           git status
 
