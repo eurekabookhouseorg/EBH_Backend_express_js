@@ -85,7 +85,7 @@ exports.getOrder = async(req, res) => {
                         groupedOrder[order_id].products.push({
                             product_id: order.db_order_product && order.db_order_product.db_product ? order.db_order_product.db_product.product_id : null,
                             product_name: order.db_order_product && order.db_order_product.db_product && order.db_order_product.db_product.db_product_description ? order.db_order_product.db_product.db_product_description.name: null,
-                            qty: order.db_order_product.quantity,
+                            quantity: order.db_order_product && order.db_order_product.db_product ? order.db_order_product.db_product.quantity : null,
                             model: order.db_order_product && order.db_order_product.db_product ? order.db_order_product.db_product.model : null,
                             sku: order.db_order_product && order.db_order_product.db_product ? order.db_order_product.db_product.sku : null,
                             is_elibu: order.db_order_product && order.db_order_product.db_product ? order.db_order_product.db_product.is_elibu : null,

@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const orderController = require('../controller/orderController');
+const OrderController = require('../controller/OrderController');
 
-router.get('/', orderController.getOrder);
-router.get('/detail', orderController.detailOrder);
-router.post('/', orderController.checkoutProduct);
-router.post('/mitrans', orderController.mitrans);
+router.get('/', OrderController.getOrder);
+router.get('/detail', OrderController.detailOrder);
+router.post('/', OrderController.checkoutProduct);
+router.post('/mitrans', OrderController.mitrans);
 
 module.exports = router;
