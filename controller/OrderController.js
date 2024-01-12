@@ -28,6 +28,9 @@ const db_product_description = db_product_description_model(sequelize, DataTypes
 const  db_notification_model= require('../models/db_notification');
 const db_notification = db_notification_model(sequelize, DataTypes);
 
+const db_cart = require("../models/db_cart");
+const carts = db_cart(sequelize, DataTypes);
+
 // const { Op } = require('sequelize');
 
 const customErrorMiddleware = require("../middleware/middleware.result")
@@ -438,6 +441,13 @@ exports.checkoutProduct = async (req, res) => {
                             elib_borrowed_at: elib_borrowed_at,
                             elib_expired_at: elib_expired_at,
                             elib_created_at: elib_created_at,
+                        });
+
+                        await carts.destroy({
+                            where: {
+                                id_produk: product.product_id,
+                                id_customer: customer_id,
+                            },
                         });
                     }
 
