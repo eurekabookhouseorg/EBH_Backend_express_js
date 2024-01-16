@@ -238,7 +238,7 @@ exports.editCustomer = async (req, res) => {
 
                 if (user) {
                     // Lakukan pembaruan profil pelanggan menggunakan metode update
-                    const normalizedPath = req.file ? req.file.path.split(path.sep).join('/') : null;
+                    const normalizedPath = req.file ? req.file.path.split(path.sep).join('/') : (user.avatar || null);
                     const updatedUser = await user.update({
                         firstname: firstname,
                         lastname: lastname,
