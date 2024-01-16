@@ -217,10 +217,11 @@ exports.login = async (req, res) => {
 }
 
 exports.editCustomer = async (req, res) => {
-    const errorsFromMiddleware = await customErrorMiddleware(req); // Ini buat middleware nya, jadi
+    const errorsFromMiddleware = await customErrorMiddleware(req);
+
     try {
         if (!errorsFromMiddleware) {
-            const { customer_id, firstname, lastname, email, telephone } = req.body;
+            const { customer_id, firstname, lastname, email, telephone } = req.body || {};
             const data = await customers.findByPk(customer_id);
 
             // Periksa token pelanggan yang dikirim oleh klien
@@ -237,7 +238,7 @@ exports.editCustomer = async (req, res) => {
 
                 if (user) {
                     // Lakukan pembaruan profil pelanggan menggunakan metode update
-                    const normalizedPath = req.file.path.split(path.sep).join('/');
+                    const normalizedPath = req.file ? req.file.path.split(path.sep).join('/') : null;
                     const updatedUser = await user.update({
                         firstname: firstname,
                         lastname: lastname,
@@ -280,4 +281,4 @@ exports.editCustomer = async (req, res) => {
             },
         });
     }
-}
+};
