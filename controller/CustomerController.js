@@ -93,17 +93,17 @@ exports.register = async (req, res) => {
 
                 })
                 if (createUser) {
-                    // await customers.update(
-                    //     {
-                    //         password: core.encryptPasswordV1(req.body.password, createUser.salt)
-                    //     },
-                    //     {
-                    //         where: {
-                    //             customer_id: createUser.customer_id
+                    await customers.update(
+                        {
+                            password: core.encryptPasswordV1(req.body.password, createUser.salt)
+                        },
+                        {
+                            where: {
+                                customer_id: createUser.customer_id
 
-                    //         }
-                    //     }
-                    // )
+                            }
+                        }
+                    )
                     output = {
                         status: {
                             code: 200,

@@ -16,19 +16,19 @@ exports.validate = (method) => {
                     .withMessage(`Email Tidak Boleh Kosong`)
                     .normalizeEmail()
                     .isEmail().withMessage('Format Email Salah'),
-                // check('password')
-                //     .not().isEmpty()
-                //     .withMessage(`Password Tidak Boleh Kosong`).custom(async (pass, { req }) => {
-                //         const { email, password } = req.body
+                check('password')
+                    .not().isEmpty()
+                    .withMessage(`Password Tidak Boleh Kosong`).custom(async (pass, { req }) => {
+                        const { email, password } = req.body
 
-                //         let query = await db.query(`SELECT * FROM elib_penerbit WHERE LOWER(email) = '${email}'  AND password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('${password}'))))) AND status = '2'`)
+                        let query = await db.query(`SELECT * FROM db_customer WHERE LOWER(email) = '${email}'  AND password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('${password}'))))) AND status = '1'`)
 
-                //         const validate = Boolean(query.length)
+                        const validate = Boolean(query.length)
 
-                //         if (!validate) {
-                //             throw new SyntaxError('Email Atau Password Salah')
-                //         }
-                //     }),
+                        if (!validate) {
+                            throw new SyntaxError('Email Atau Password Salah')
+                        }
+                    }),
 
 
             ]
