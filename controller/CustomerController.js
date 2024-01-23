@@ -4,6 +4,7 @@ const db_customer = require("../models/db_customer");
 const customers = db_customer(sequelize, DataTypes);
 const customErrorMiddleware = require("../middleware/middleware.result")
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 exports.getCustomers = async (req, res) => {
     try {
@@ -143,56 +144,63 @@ exports.register = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-
-    const errorsFromMiddleware = await customErrorMiddleware(req) // ini buat middleware nya, jadi 
+    const errorsFromMiddleware = await customErrorMiddleware(req);
     try {
         if (!errorsFromMiddleware) {
             const { email, password } = req.body;
 
-            const user = await customers.findOne(
-                {
-                    where: {
-                        email: email
-                    }
-                }
-            )
+            const user = await customers.findOne({
+                where: {
+                    email: email,
+                },
+            });
+
             if (user) {
-                let payload = {
-                    id: user.customer_id,
-                    // token : token
+                // Compare the provided password with the hashed password stored in the database
+                const passwordMatch = await bcrypt.compare(password, user.password);
 
-                };
-                const token = core.jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "7d", });
-                const data = await customers.update(
-                    {
-                        token : token
-                    },
-                    {
-                        where : {
-                            email : req.body.email
+                if (passwordMatch) {
+                    let payload = {
+                        id: user.customer_id,
+                    };
+                    const token = core.jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: '7d' });
+
+                    await customers.update(
+                        {
+                            token: token,
                         },
-                    }
-                );
+                        {
+                            where: {
+                                email: req.body.email,
+                            },
+                        }
+                    );
 
-                res.status(200).json({
-                    status: {
-                        code: 200,
-                        message: 'Login Berhasil'
-                    },
-                    data: {
-                        id_customer : user.customer_id,
-                        token: token
-                    }
-                    // id: user.customer_id
-                });
-            }
-            else {
-                output = {
+                    res.status(200).json({
+                        status: {
+                            code: 200,
+                            message: 'Login Berhasil',
+                        },
+                        data: {
+                            id_customer: user.customer_id,
+                            token: token,
+                        },
+                    });
+                } else {
+                    res.status(400).json({
+                        status: {
+                            code: 400,
+                            message: 'Incorrect email or password',
+                        },
+                    });
+                }
+            } else {
+                res.status(400).json({
                     status: {
                         code: 400,
-                        message: 'Incorrect email & password'
-                    }
-                }
+                        message: 'Incorrect email or password',
+                    },
+                });
             }
         }
     } catch (error) {
@@ -203,8 +211,8 @@ exports.login = async (req, res) => {
             },
         });
     }
-    
-}
+};
+
 
 exports.editCustomer = async (req, res) => {
     const errorsFromMiddleware = await customErrorMiddleware(req);
