@@ -17,8 +17,8 @@ router.get('/', CustomerController.getCustomers);
 router.get('/detail', CustomerController.detailCustomer);
 router.put('/update', CustomerController.updateCustomer);
 router.post('/register', CustomerController.register);
-router.post('/login', CustomerController.login);
+// router.post('/login', CustomerController.login);
 router.put('/edit', upload.single('avatar'),CustomerController.editCustomer);
-// router.post('/login', authMiddleware.validate('login'), CustomerController.login);
+router.post('/login', authMiddleware.validate('login'), CustomerController.login);
 
 module.exports = router
