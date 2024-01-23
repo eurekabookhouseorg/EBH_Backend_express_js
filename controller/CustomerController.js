@@ -176,7 +176,7 @@ exports.login = async (req, res) => {
                 res.status(200).json({
                     status: {
                         code: 200,
-                        message: 'Login Berhasil'
+                        message: 'Login Berhasill'
                     },
                     data: {
                         id_customer : user.customer_id,
