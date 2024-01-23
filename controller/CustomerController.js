@@ -160,7 +160,6 @@ exports.login = async (req, res) => {
                 let payload = {
                     id: user.customer_id,
                     // token : token
-
                 };
                 const token = core.jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "7d", });
                 const data = await customers.update(
