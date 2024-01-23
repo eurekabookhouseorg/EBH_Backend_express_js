@@ -157,44 +157,34 @@ exports.login = async (req, res) => {
                 }
             )
             if (user) {
+                let payload = {
+                    id: user.customer_id,
+                    // token : token
 
-                if(password === user.password){
-                    let payload = {
-                        id: user.customer_id,
-                        // token : token
-    
-                    };
-                    const token = core.jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "7d", });
-                    const data = await customers.update(
-                        {
-                            token : token
+                };
+                const token = core.jwt.sign(payload, process.env.TOKEN_KEY, { expiresIn: "7d", });
+                const data = await customers.update(
+                    {
+                        token : token
+                    },
+                    {
+                        where : {
+                            email : req.body.email
                         },
-                        {
-                            where : {
-                                email : req.body.email
-                            },
-                        }
-                    );
-    
-                    res.status(200).json({
-                        status: {
-                            code: 200,
-                            message: 'Login Berhasil'
-                        },
-                        data: {
-                            id_customer : user.customer_id,
-                            token: token
-                        }
-                        // id: user.customer_id
-                    });
-                } else{
-                    res.status(400).json({
-                        status: {
-                            code: 400,
-                            message: 'password tidak sesuai',
-                        },
-                    });
-                }
+                    }
+                );
+
+                res.status(200).json({
+                    status: {
+                        code: 200,
+                        message: 'Login Berhasil'
+                    },
+                    data: {
+                        id_customer : user.customer_id,
+                        token: token
+                    }
+                    // id: user.customer_id
+                });
             }
             else {
                 output = {
