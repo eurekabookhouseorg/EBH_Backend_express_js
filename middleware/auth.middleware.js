@@ -1,9 +1,9 @@
-const core = require('../config/core')
+// const core = require('../config/core')
 const {sequelize, DataTypes} = require("../connection/conn");
 const db_customer = require("../models/db_customer");
 const customers = db_customer(sequelize, DataTypes);
 const { check } = require('express-validator')
-const db = require('../config/config')
+// const db = require('../config/config')
 const bcrypt = require('bcrypt');
 
 
