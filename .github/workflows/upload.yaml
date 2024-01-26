@@ -10,7 +10,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-
+    - name: Modify Permissions for sequelize-auto
+      run: chmod +x ./node_modules/.bin/sequelize-auto
     - name: SSH and Deploy
       uses: appleboy/ssh-action@master
       with:
@@ -23,6 +24,7 @@ jobs:
           git checkout develop
           git add .
           git commit -m "dari server"
+          git push
           git pull origin develop
           git merge develop
           npm run build && npm start
