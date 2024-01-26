@@ -21,5 +21,7 @@ jobs:
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
           git checkout develop
+          git add .
+          git commit -m "dari server"
           git pull origin develop
           npm run build && npm start
