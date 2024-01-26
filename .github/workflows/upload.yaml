@@ -24,4 +24,5 @@ jobs:
           git add .
           git commit -m "dari server"
           git pull origin develop
+          git merge develop
           npm run build && npm start
