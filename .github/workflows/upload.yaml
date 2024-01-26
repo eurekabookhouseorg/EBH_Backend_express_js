@@ -5,13 +5,16 @@ on:
     branches: [develop]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
+  steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
+
     - name: Modify Permissions for sequelize-auto
       run: chmod +x ./node_modules/.bin/sequelize-auto
+
+    - name: Resolve Git Merge Conflict
+      run: git checkout --theirs .env
+
     - name: SSH and Deploy
       uses: appleboy/ssh-action@master
       with:
