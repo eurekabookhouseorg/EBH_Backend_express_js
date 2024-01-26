@@ -6,18 +6,18 @@ on:
 
 jobs:
   steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Modify Permissions for sequelize-auto
+        run: chmod +x ./node_modules/.bin/sequelize-auto
+    
 
-    - name: Modify Permissions for sequelize-auto
-      run: chmod +x ./node_modules/.bin/sequelize-auto
-
-    - name: Resolve Git Merge Conflict
+      - name: Resolve Git Merge Conflict
       run: git checkout --theirs .env
 
-    - name: SSH and Deploy
-      uses: appleboy/ssh-action@master
-      with:
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@master
+        with:
         host: 103.235.73.12
         username: jaja
         port: 2020
