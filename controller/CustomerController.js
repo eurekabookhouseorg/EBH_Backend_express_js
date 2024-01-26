@@ -143,11 +143,10 @@ exports.register = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-
     const errorsFromMiddleware = await customErrorMiddleware(req) // ini buat middleware nya, jadi 
     try {
         if (!errorsFromMiddleware) {
-            const { email, password } = req.body;
+            const { email } = req.body;
 
             const user = await customers.findOne(
                 {
@@ -173,19 +172,20 @@ exports.login = async (req, res) => {
                     }
                 );
 
-                res.status(200).json({
-                    status: {
-                        code: 200,
-                        message: 'Login Berhasill'
-                    },
-                    data: {
-                        id_customer : user.customer_id,
-                        token: token
-                    }
-                    // id: user.customer_id
-                });
-            }
-            else {
+                if (data) {
+                    res.status(200).json({
+                        status: {
+                            code: 200,
+                            message: 'Login Berhasil'
+                        },
+                        data: {
+                            id_customer : user.customer_id,
+                            token: token
+                        }
+                        // id: user.customer_id
+                    });
+                }
+            } else {
                 output = {
                     status: {
                         code: 400,
@@ -202,7 +202,6 @@ exports.login = async (req, res) => {
             },
         });
     }
-    
 }
 
 
