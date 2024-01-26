@@ -5,19 +5,19 @@ on:
     branches: [develop]
 
 jobs:
-  steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Modify Permissions for sequelize-auto
-        run: chmod +x ./node_modules/.bin/sequelize-auto
-    
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Modify Permissions for sequelize-auto
+      run: chmod +x ./node_modules/.bin/sequelize-auto
 
-      - name: Resolve Git Merge Conflict
+    - name: Resolve Git Merge Conflict
       run: git checkout --theirs .env
-
-      - name: SSH and Deploy
-        uses: appleboy/ssh-action@master
-        with:
+    - name: SSH and Deploy
+      uses: appleboy/ssh-action@master
+      with:
         host: 103.235.73.12
         username: jaja
         port: 2020
@@ -25,9 +25,5 @@ jobs:
         script: |
           cd /home/jaja/sites/stagingapi.eurekabookhouse.co.id/
           git checkout develop
-          git add .
-          git commit -m "dari server"
-          git push
           git pull origin develop
-          git merge develop
           npm run build && npm start
